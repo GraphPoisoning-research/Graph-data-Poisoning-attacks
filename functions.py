@@ -183,7 +183,6 @@ def line_3d(origin_degrees, eps1_degrees):
     plt.show()
 
 
-# ------------------------------------  New -------------------------------
 def adv_node_sample(G, alpha):
     """
     Samples a subset of nodes from a given graph using a specified proportion as the adversary nodes.
@@ -454,7 +453,7 @@ def estimate_adversary_count(G: nx.Graph, sensitivity: float = 1.0):
         fitResults = powerlaw.Fit(degreeSequence, discrete=True, verbose=False)
     except Exception as e:
         print(f"Powerlaw fit failed: {e}")
-        return -1, None  # 返回-1表示错误
+        return -1, None  # -1 means error
 
     ksDistance = fitResults.power_law.D
     print(f"K-S distance(D): {ksDistance:.4f}")
