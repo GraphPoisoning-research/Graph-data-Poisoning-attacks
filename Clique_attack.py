@@ -9,7 +9,7 @@ import networkx as nx
 from functions import *
 
 
-# 通过构建adversary nodes组成的dense community以提高模块度，
+
 class Clique_attack(object):
     def __init__(self, G, epsilon, alpha):
         self.G = G
@@ -33,7 +33,7 @@ class Clique_attack(object):
         """
         modifyMatrix = adjMatrix.copy()
         advNodeList =  self.advNodeList
-        for i in range(len(advNodeList)):    # adversary nodes内部构建Clique
+        for i in range(len(advNodeList)):    
             nodeI = advNodeList[i]
             for j in range(0, i):
                 nodeJ = advNodeList[j]
@@ -50,7 +50,6 @@ class Clique_attack(object):
         :return:
         """
         modiMatrixIPA = self._clique_gen(oriMatrix)
-        # 对嵌入攻击之后的邻接矩阵进行统一扰动
         p = np.exp(self.epsilon) / (1 + np.exp(self.epsilon))
         inverse_matrix = (np.random.rand(self.size, self.size) > p).astype(int)
         pertMatt = np.abs(modiMatrixIPA - inverse_matrix).astype(int)
