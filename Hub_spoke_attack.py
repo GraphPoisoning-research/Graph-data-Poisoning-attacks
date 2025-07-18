@@ -10,7 +10,7 @@ import networkx as nx
 from functions import *
 
 
-# 通过构建adversary nodes组成的dense community以提高模块度，
+
 class Hub_spoke_attack(object):
     def __init__(self, G, epsilon, alpha):
         self.G = G
@@ -37,27 +37,26 @@ class Hub_spoke_attack(object):
         """
         modifyMatrix = adjMatrix.copy()
         advNodeList =  self.advNodeList
-        for nodeI in advNodeList:    # 全体隔绝
-            modifyMatrix[nodeI, :] = 0  # 断开从nodeI出发的所有边
-            # modifyMatrix[:, nodeI] = 0  # 断开指向nodeI的所有边
-        # 选择Hub node， 两种策略
-        # hubNode = np.random.choice(advNodeList)     # 策略1：随机选择一个节点作为Hub node
-            # 策略2：将最大度值节点作为Hub node
+        for nodeI in advNodeList:    # Disconnect all edges with nodeI
+            modifyMatrix[nodeI, :] = 0  
+            # modifyMatrix[:, nodeI] = 0 
+        # hubNode = np.random.choice(advNodeList)     # strategy 1：chose a node as Hub node randomly
+            # strategy 2: mark the max degree node as Hub node
         degList = list(dict(self.G.degree()).values())
         advDegList = [degList[node] for node in advNodeList]
         maxNode = self.advNodeList[np.argmax(advDegList)]
         hubNode = maxNode
-        # 构建连通三元组，两种策略
-        # for i in range(len(advNodeList)):    # 策略1：adversary nodes内部所有节点连接到Hub node
+        # Construct triples, 2 strategies
+        # for i in range(len(advNodeList)):    # strategy 1
         #     nodeI = advNodeList[i]
         #     if nodeI != hubNode:
         #         modifyMatrix[nodeI, hubNode] = 1
         #         modifyMatrix[hubNode, nodeI] = 1
-        # 策略2： 所有节点（包含所有adversary nodes和普通nodes）都连接到hub node
+        # strategy 2
         for i in range(self.size):
             nodeI = i
-            modifyMatrix[hubNode, nodeI] = 1        # hub Node向所有节点连接
-            # modifyMatrix[nodeI, hubNode] = 1        # 所有节点向hub Node连接
+            modifyMatrix[hubNode, nodeI] = 1        # hub Node connect to all nodes 
+            # modifyMatrix[nodeI, hubNode] = 1        # other nodes connect to hub Node
         modifyMatrix[hubNode, hubNode] = 0
         return modifyMatrix
 
@@ -69,7 +68,6 @@ class Hub_spoke_attack(object):
         :return:
         """
         modiMatrixIPA = self.hub_spoke_gen(oriMatrix)
-        # 对嵌入攻击之后的邻接矩阵进行统一扰动
         p = np.exp(self.epsilon) / (1 + np.exp(self.epsilon))
         inverse_matrix = (np.random.rand(self.size, self.size) > p).astype(int)
         pertMatt = np.abs(modiMatrixIPA - inverse_matrix).astype(int)
